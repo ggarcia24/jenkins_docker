@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -x
 
 if [[ -f .config ]]; then
     source .config
@@ -13,9 +13,16 @@ if [[ ! -d $JENKINS_HOME ]]; then
     chown 1000:1000 $JENKINS_HOME
 fi
 
+if [[ $(docker ps --filter name=jenkins-docker --quiet) != $(docker ps --all --filter name=jenkins-docker --quiet) ]]; then
+    for STALE in $(docker ps --all --filter name=jenkins-docker --quiet); do
+        docker rm -f $STALE
+    done
+fi
+
+
 docker run -d \
     --name=jenkins-docker\
     --publish 8080:8080 \
     --publish 50000:50000 \
-    --mount source=$JENKINS_HOME,destination=/var/jenkins_home \
+    --volume $JENKINS_HOME:/var/jenkins_home \
     ggarcia24/jenkins
