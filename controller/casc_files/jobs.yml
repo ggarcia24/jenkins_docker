@@ -1,0 +1,87 @@
+jobs:
+  - script: >
+      organizationFolder('Bitbucket Organization Folder') {
+        description("Bitbucket orga folder configured with JCasC")
+        displayName('My Project')
+        // "Projects"
+        organizations {
+          bitbucket {
+            repoOwner("TEST")
+            credentialsId("git-credentials")
+            includes("*")
+            excludes("*-deprecated-*")
+            // "Traits" ("Behaviours" in the GUI) that are "declarative-compatible"
+            traits {
+              cleanBeforeCheckoutTrait {
+                  extension {
+                      deleteUntrackedNestedRepositories(trie)
+                  }
+              }
+              bitbucketBranchCommitSkipTrait()
+              submoduleOptionTrait {
+                extension {
+                  recursiveSubmodules(true)
+                  parentCredentials(true)
+                  disableSubmodules(false)
+                  trackingSubmodules(false)
+                  reference(null)
+                  timeout(null)
+                }
+              }
+            }
+          }
+        }
+        // "Traits" ("Behaviours" in the GUI) that are NOT "declarative-compatible"
+        // For some 'traits, we need to configure this stuff by hand until JobDSL handles it
+        // https://issues.jenkins.io/browse/JENKINS-45504
+        configure { node ->
+            def traits = node / navigators / 'com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator' / traits
+            // Discover branches
+            traits << 'com.cloudbees.jenkins.plugins.bitbucket.BranchDiscoveryTrait' {
+                //  3 : All branches
+                strategyId('3')
+            }
+        }
+        properties {
+          organizationChildHealthMetricsProperty {
+            templates {
+              primaryBranchHealthMetric()
+            }
+          }
+          jiraFolderProperty {
+            sites {
+              jiraSite {
+                // Specify the root URL of your Jira installation, like http://issues.apache.org/jira/.
+                url("https://ggarcia24.atlassian.net")
+                // Connection timeout for Jira REST API calls (in seconds).
+                timeout(30)
+                // If this is unchecked, issues will be only updated if the build is SUCCESSful or UNSTABLE.
+                updateJiraIssueForAllStatus(false)
+                // You can define your own pattern to search for Jira issue ids in the SCM logs.
+                userPattern("TP1")
+              }
+            }
+          }
+        }
+        // "Project Recognizers"
+        projectFactories {
+            workflowMultiBranchProjectFactory {
+                scriptPath 'Jenkinsfile'
+            }
+        }
+        // "Orphaned Item Strategy"
+        orphanedItemStrategy {
+          discardOldItems {
+            daysToKeep(-1)
+            numToKeep(-1)
+          }
+        }
+        // "Scan Organization Folder Triggers" : 1 day
+        // We need to configure this stuff by hand because JobDSL only allow 'periodic(int min)' for now
+        configure { node ->
+          node / triggers / 'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger' {
+            spec('H H * * *')
+            interval(14400000)
+          }
+        }
+      }

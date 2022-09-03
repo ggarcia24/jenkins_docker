@@ -1,0 +1,100 @@
+jenkins:
+  numExecutors: 0
+  agentProtocols:
+    - "jnlp2"
+  mode: EXCLUSIVE
+  quietPeriod: 60
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: 50000
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: "admin"
+        name: "Administrator"
+        password: password123
+        properties:
+        - "apiToken"
+        - "myView"
+        - preferredProvider:
+            providerId: "default"
+        - "timezone"
+        - mailer:
+            emailAddress: "admin@localhost"
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Jenkins administrators with full permissions"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "manager"
+            description: "Jenkins managers with limited admin permissions"
+            permissions:
+              - "Overall/Manage"
+            assignments:
+              - "manager"
+          - name: "readonly-admin"
+            description: "Jenkins read-only administrators"
+            permissions:
+              - "Overall/SystemRead"
+              - "Job/Read"
+              - "Agent/Read"
+            assignments:
+              - "readonly"
+          - name: "readonly-user"
+            description: "Read-only users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+              - "Agent/Build"
+            assignments:
+              - "authenticated"
+        items:
+          - name: "@OwnerNoSid"
+            description: "Primary Owners"
+            pattern: ".*"
+            permissions:
+              - "Job/Configure"
+              - "Job/Build"
+              - "Job/Delete"
+              - "Run/Delete"
+            assignments:
+              - "authenticated"
+          - name: "@CoOwnerNoSid"
+            description: "Secondary Owners"
+            pattern: ".*"
+            permissions:
+              - "Job/Configure"
+              - "Job/Build"
+            assignments:
+              - "authenticated"
+        agents:
+          - name: "@OwnerNoSid"
+            description: "Primary Owners"
+            pattern: ".*"
+            permissions:
+              - "Agent/Configure"
+              - "Agent/Build"
+              - "Agent/Delete"
+              - "Agent/Build"
+            assignments:
+              - "authenticated"
+          - name: "@CoOwnerNoSid"
+            description: "Secondary Owners"
+            pattern: ".*"
+            permissions:
+              - "Agent/Connect"
+              - "Agent/Build"
+            assignments:
+              - "authenticated"
