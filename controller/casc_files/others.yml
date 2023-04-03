@@ -1,40 +1,16 @@
 unclassified:
-  audit-trail:
-    logBuildCause: true
-    logCredentialsUsage: true
-    loggers:
-    - console:
-        dateFormat: "yyyy-MM-dd HH:mm:ss:SSS"
-        output: STD_OUT
-    - logFile:
-        count: 7
-        limit: 50
-        log: "/var/jenkins_home/audit.log"
-    pattern: ".*/(?:configSubmit|doDelete|postBuildResult|enable|disable|cancelQueue|stop|toggleLogKeep|doWipeOutWorkspace|createItem|createView|toggleOffline|cancelQuietDown|quietDown|restart|exit|safeExit)/?.*"
-  bitbucketEndpointConfiguration:
-    endpoints:
-    - bitbucketServerEndpoint:
-        credentialsId: "git-credentials"
-        displayName: "Bitbucket Server"
-        manageHooks: true
-        serverUrl: "http://192.168.178.21:7990"
-        webhookImplementation: NATIVE
   buildDiscarders:
     configuredBuildDiscarders:
-    - "jobBuildDiscarder"
+      - "jobBuildDiscarder"
   buildStepOperation:
     enabled: false
   defaultFolderConfiguration:
     healthMetrics:
-    - "primaryBranchHealthMetric"
+      - "primaryBranchHealthMetric"
   fingerprints:
     fingerprintCleanupDisabled: false
     storage: "file"
-  gitHubConfiguration:
-    apiRateLimitChecker: ThrottleForNormalize
-  gitHubPluginConfig:
-    hookUrl: "http://192.168.178.21:8080/github-webhook/"
-  gitSCM:
+  scmGit:
     addGitTagAction: false
     allowSecondFetch: false
     createAccountBasedOnEmail: true
@@ -46,7 +22,7 @@ unclassified:
     useExistingAccountWithSameEmail: true
   globalTimeOutConfiguration:
     operations:
-    - "abortOperation"
+      - "abortOperation"
     overwriteable: false
   junitTestResultStorage:
     storage: "file"
@@ -55,16 +31,10 @@ unclassified:
     systemLocale: "en"
   location:
     adminAddress: "jenkins@localhost"
-    url: "http://192.168.178.21:8080/"
-  mailer:
-    authentication:
-      password: "{AQAAABAAAAAQRgy2DY0PTZoYnq/BBl5YRpMHi0p/IhWOJ7wR2rIwMUM=}"
-      username: "asd"
-    charset: "UTF-8"
-    smtpHost: "smtp.localhost"
-    useSsl: false
-    useTls: true
+    url: "http://ggarcia24.duckdns.org:8080/"
   pollSCM:
     pollingThreadCount: 10
-  prismConfiguration:
-    theme: PRISM
+  timestamper:
+    allPipelines: true
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"

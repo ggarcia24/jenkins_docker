@@ -1,35 +1,35 @@
 jenkins:
   clouds:
-  - ecs:
-      credentialsId: "aws-creds"
-      jenkinsUrl: "http://192.168.178.21:8080/"
-      name: "testing"
-      regionName: "us-east-1"
-      retainAgents: true
-      retentionTimeout: 15
-      templates:
-      - assignPublicIp: false
-        cpu: 0
-        cpuArchitecture: "X86_64"
-        defaultCapacityProvider: false
-        enableExecuteCommand: false
-        executionRole: "asd"
-        image: "jenkins/inbound-agent"
-        label: "asd"
-        launchType: "EC2"
-        logDriverOptions:
-        - name: "aws-something"
-          value: "asd"
-        memory: 0
-        memoryReservation: 8192
-        networkMode: "default"
-        operatingSystemFamily: "LINUX"
-        platformVersion: "LATEST"
-        privileged: true
-        remoteFSRoot: "/home/jenkins"
-        securityGroups: "asd"
-        sharedMemorySize: 0
-        subnets: "asd"
-        templateName: "asd"
-        uniqueRemoteFSRoot: false
-      tunnel: "jenkins.master.local"
+    - ecs:
+        credentialsId: "aws-creds"
+        jenkinsUrl: "http://192.168.178.81:8080/"
+        name: "testing"
+        regionName: "us-east-1"
+        retainAgents: true
+        retentionTimeout: 15
+        templates:
+          - assignPublicIp: false
+            cpu: 0
+            cpuArchitecture: "X86_64"
+            defaultCapacityProvider: false
+            enableExecuteCommand: false
+            executionRole: "asd"
+            image: "jenkins/inbound-agent"
+            label: "asd"
+            launchType: "EC2"
+            logDriverOptions:
+              - name: "aws-something"
+                value: "asd"
+            memory: 0
+            memoryReservation: 8192
+            networkMode: "default"
+            operatingSystemFamily: "LINUX"
+            platformVersion: "LATEST"
+            privileged: true
+            remoteFSRoot: "/home/jenkins"
+            securityGroups: "asd"
+            sharedMemorySize: 0
+            subnets: "asd"
+            templateName: "asd"
+            uniqueRemoteFSRoot: false
+        tunnel: "jenkins.master.local"

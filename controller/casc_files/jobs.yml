@@ -1,53 +1,58 @@
 jobs:
   - script: >
-      organizationFolder('Bitbucket Organization Folder') {
+      organizationFolder('TEST') {
         description("Bitbucket orga folder configured with JCasC")
-        displayName('My Project')
+        displayName('Testing Project')
         // "Projects"
         organizations {
           bitbucket {
             repoOwner("TEST")
             credentialsId("git-credentials")
-            includes("*")
-            excludes("*-deprecated-*")
-            // "Traits" ("Behaviours" in the GUI) that are "declarative-compatible"
             traits {
-              cleanBeforeCheckoutTrait {
-                  extension {
-                      deleteUntrackedNestedRepositories(trie)
-                  }
-              }
-              bitbucketBranchCommitSkipTrait()
-              submoduleOptionTrait {
+              sourceWildcardFilter {
+                // Space-separated list of project name patterns to consider.
+                includes("*")
+                // Space-separated list of project name patterns to ignore even if matched by the includes list.
+                excludes("*-deprecated-*")
+              } 
+              cleanBeforeCheckout {
                 extension {
-                  recursiveSubmodules(true)
-                  parentCredentials(true)
-                  disableSubmodules(false)
-                  trackingSubmodules(false)
-                  reference(null)
-                  timeout(null)
+                  deleteUntrackedNestedRepositories(true)
                 }
               }
+              bitbucketBranchDiscovery {
+                // Determines which branches are discovered.
+                strategyId(3)
+              } 
+              submoduleOption {
+                extension {
+                  // Use credentials from the default remote of the parent project.
+                  parentCredentials(true)
+                  // Retrieve all submodules recursively (uses '--recursive' option which requires git>=1.6.5)
+                  recursiveSubmodules(true)
+                }
+              }
+              bitbucketBranchCommitSkipTrait()
             }
           }
         }
-        // "Traits" ("Behaviours" in the GUI) that are NOT "declarative-compatible"
-        // For some 'traits, we need to configure this stuff by hand until JobDSL handles it
-        // https://issues.jenkins.io/browse/JENKINS-45504
-        configure { node ->
-            def traits = node / navigators / 'com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator' / traits
-            // Discover branches
-            traits << 'com.cloudbees.jenkins.plugins.bitbucket.BranchDiscoveryTrait' {
-                //  3 : All branches
-                strategyId('3')
-            }
+        // Sets the orphaned branch strategy.
+        orphanedItemStrategy {
+          // Trims dead items by the number of days or the number of items.
+          discardOldItems {
+            // Sets the number of days to keep old items.
+            daysToKeep(30)
+            // Sets the number of old items to keep.
+            numToKeep(15)
+          }
+        }
+        triggers {
+          periodicFolderTrigger {
+            // The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered.
+            interval("12h")
+          } 
         }
         properties {
-          organizationChildHealthMetricsProperty {
-            templates {
-              primaryBranchHealthMetric()
-            }
-          }
           jiraFolderProperty {
             sites {
               jiraSite {
@@ -61,27 +66,6 @@ jobs:
                 userPattern("TP1")
               }
             }
-          }
-        }
-        // "Project Recognizers"
-        projectFactories {
-            workflowMultiBranchProjectFactory {
-                scriptPath 'Jenkinsfile'
-            }
-        }
-        // "Orphaned Item Strategy"
-        orphanedItemStrategy {
-          discardOldItems {
-            daysToKeep(-1)
-            numToKeep(-1)
-          }
-        }
-        // "Scan Organization Folder Triggers" : 1 day
-        // We need to configure this stuff by hand because JobDSL only allow 'periodic(int min)' for now
-        configure { node ->
-          node / triggers / 'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger' {
-            spec('H H * * *')
-            interval(14400000)
           }
         }
       }

@@ -1,0 +1,14 @@
+unclassified:
+  globalLibraries:
+    libraries:
+    - cachingConfiguration:
+        refreshTimeMinutes: 720
+      defaultVersion: "main"
+      name: "JenkinsUtils"
+      retriever:
+        modernSCM:
+          scm:
+            git:
+              credentialsId: "git-credentials"
+              id: "a3d80674-530a-48d4-8ed3-06e68dc59e5c"
+              remote: "http://192.168.178.81:7990/scm/jenkins/pipeline-library.git"

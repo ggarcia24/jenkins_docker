@@ -1,0 +1,9 @@
+unclassified:
+  bitbucketEndpointConfiguration:
+    endpoints:
+      - bitbucketServerEndpoint:
+          credentialsId: "git-credentials"
+          displayName: "Bitbucket Server"
+          manageHooks: true
+          serverUrl: "http://192.168.178.81:7990"
+          webhookImplementation: NATIVE
