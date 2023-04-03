@@ -8,7 +8,7 @@ RUN apt update -y && \
     apt -y --no-install-recommends install curl wget && \
     rm -rf /var/lib/apt/lists/*
 # Change timezone
-ARG timezone="America/Argentina/Cordoba"
+ARG timezone="Europe/Berlin"
 RUN echo $timezone > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 USER jenkins
